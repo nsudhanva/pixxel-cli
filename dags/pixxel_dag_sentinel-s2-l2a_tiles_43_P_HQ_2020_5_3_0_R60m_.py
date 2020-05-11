@@ -16,21 +16,21 @@ os.environ["AWS_REQUEST_PAYER"] = "requester"
 
 s3_date_modified = '' 
 
-bucket = 'BUCKET'
-command = 'COMMAND'
-utm_code = 'UTM_CODE'
-latitude_band = 'LATITUDE_BAND'
-square = 'SQUARE'
-year = 'YEAR'
-month = 'MONTH'
-day = 'DAY'
-sequence = 'SEQUENCE'
-resolution = 'RESOLUTION'
+bucket = 'sentinel-s2-l2a'
+command = 'ndvi'
+utm_code = '43'
+latitude_band = 'P'
+square = 'HQ'
+year = '2020'
+month = '5'
+day = '3'
+sequence = '0'
+resolution = 'R60m'
 
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(YEAR, MONTH, DAY),
+    'start_date': datetime(2020, 5, 3),
     'retries': 5,
     'retry_delay': timedelta(minutes=5),
     'catchup': False
@@ -56,7 +56,7 @@ def request_image_files_from_s3(files):
     response_jp2s = []
 
     for i in files:
-        tile_key = 'TILE_KEY' + i
+        tile_key = 'sentinel-s2-l2a/tiles/43/P/HQ/2020/5/3/0/R60m/' + i
         print(tile_key)
         nir = rasterio.open('s3://' + tile_key, driver='JP2OpenJPEG')
         response_jp2s.append(nir)
@@ -65,9 +65,9 @@ def request_image_files_from_s3(files):
 
 def calculate_index():
 
-    files = LIST_OF_FILES
+    files = ['B08.jp2', 'B04.jp2']
 
-    tile_key = 'TILE_KEY'
+    tile_key = 'sentinel-s2-l2a/tiles/43/P/HQ/2020/5/3/0/R60m/'
     tile_key = tile_key.replace('/', '_')
 
     response_jp2s = request_image_files_from_s3(files)
@@ -79,10 +79,10 @@ def calculate_index():
     profile.update(driver='GTiff')
     profile.update(dtype=rasterio.float32)
 
-    with rasterio.open('output_' + tile_key + '.tif', 'w', **profile) as dataset:
+    with rasterio.open('output_' + 'ndvi' + '_' + tile_key + '.tif', 'w', **profile) as dataset:
         dataset.write(normalized_difference.astype(rasterio.float32))
 
-    upload_processed_file_to_gcs('pixxel', 'output_' + 'COMMAND' + '_' + tile_key + '.tif', 'output_'  + 'COMMAND' + '_' + tile_key + '_airflow.tif')
+    upload_processed_file_to_gcs('pixxel', 'output_' + 'ndvi' + '_' + tile_key + '.tif', 'output_'  + 'ndvi' + '_' + tile_key + '_airflow.tif')
 
 def check_s3_modified():
 
@@ -124,7 +124,7 @@ def check_s3_modified():
     with open('modifications.json', "w", encoding='utf-8') as mod:
         json.dump(response['Contents'][0], mod, sort_keys=True, default=str)
 
-tile_key = 'TILE_KEY'
+tile_key = 'sentinel-s2-l2a/tiles/43/P/HQ/2020/5/3/0/R60m/'
 tile_key = tile_key.replace('/', '_')
     
 with DAG(

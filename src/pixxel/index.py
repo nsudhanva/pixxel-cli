@@ -50,8 +50,8 @@ class Index:
 
         list_of_files = self.get_list_of_files_from_command(command)
 
-        check_words = ('LIST_OF_FILES', 'TILE_KEY', 'COMMAND', 'UTM_CODE', 'LATITUDE_BAND', 'SQUARE', 'YEAR', 'MONTH', 'DAY', 'SEQUENCE', 'RESOLUTION')
-        rep_words = (str(list_of_files), tile_key, bucket, utm_code, latitude_band, square, year, month, day, sequence, resolution)
+        check_words = ('LIST_OF_FILES', 'TILE_KEY', 'COMMAND', 'BUCKET', 'UTM_CODE', 'LATITUDE_BAND', 'SQUARE', 'YEAR', 'MONTH', 'DAY', 'SEQUENCE', 'RESOLUTION')
+        rep_words = (str(list_of_files), tile_key, command, bucket, utm_code, latitude_band, square, year, month, day, sequence, resolution)
 
         for line in dag_file_template:
             for check, rep in zip(check_words, rep_words):
