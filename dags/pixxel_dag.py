@@ -84,7 +84,7 @@ def calculate_index():
     with open('modifications_previous.json', "r", encoding='utf-8') as mod:
         data = json.load(mod)
         
-        date_path = datetime.strptime(data['LastModified'][:10], '%Y/%m/%d')
+        date_path = '/'.join(data['LastModified'][:10].split('-'))
 
     with rasterio.open('output_' + 'COMMAND' + '_' + tile_key + '.tif', 'w', **profile) as dataset:
         dataset.write(normalized_difference.astype(rasterio.float32))

@@ -37,9 +37,7 @@ class Index:
                 blob.delete()
                 print(str(blob.name) + ' deleted')
 
-        self.delete_all_related_data()        
-
-    def upload_dag(self, bucket_name, source_file_name, destination_blob_name):
+    def upload_dag(self, source_file_name, destination_blob_name, bucket_name='us-central1-sample-a3ef44ca-bucket'):
         """Uploads a file to the bucket."""
 
         storage_client = storage.Client()
@@ -57,7 +55,6 @@ class Index:
     def get_list_of_files_from_command(self, command):
         with open('config.json') as json_file: 
             config = json.load(json_file)
-            print(config)
 
         return config[command]
         
@@ -78,8 +75,8 @@ class Index:
         list_of_files = self.get_list_of_files_from_command(command)
 
         check_words = ('LIST_OF_FILES', 'TILE_KEY', 'COMMAND', 'BUCKET', 'UTM_CODE', 'LATITUDE_BAND', 'SQUARE', 'YEAR', 'MONTH', 'DAY', 'SEQUENCE', 'RESOLUTION')
-        rep_words = (str(list_of_files), tile_key, command,     bucket, utm_code, latitude_band, square, year, month, day, sequence, resolution)
-
+        rep_words = (str(list_of_files), tile_key, command, bucket, utm_code, latitude_band, square, year, month, day, sequence, resolution)
+        
         for line in dag_file_template:
             for check, rep in zip(check_words, rep_words):
                 line = line.replace(check, rep)
@@ -88,3 +85,4 @@ class Index:
 
         dag_file_template.close()
         dag_file.close()
+        self.upload_dag('./dags/pixxel_dag_' + tile_key.replace('/', '_') + '.py', 'dags/pixxel_dag_' + tile_key.replace('/', '_') + '.py')

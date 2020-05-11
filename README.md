@@ -33,11 +33,17 @@ pixxel-cli
 
 ## Dependencies
 
+### Libraries
+
 - Python 3.7 >= or =< Python 3.8
 - Pytest >= 5.x.x
 - rasterio
+- apache-airflow
 - boto3
 - google-cloud-storage
+
+### Tools
+
 - gcloud cli tool
 - aws cli tool
 
@@ -81,6 +87,10 @@ It is recommended to create a virtual environment using **VirtualEnv** or **Anac
 
 - Listing all pipelines: ```bin/pixxel list```
 - Deleting a pipeline: ```bin/pixxel delete```
+
+## Time of a pipeline
+
+1. Checking for s3 and setting up listener
 
 ## Testing
 
