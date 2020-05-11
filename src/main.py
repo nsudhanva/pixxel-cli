@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     index = Index()
 
-    if len(sys.argv) != 11:
+    if len(sys.argv) == 11:
         if sys.argv[1] == 'list':
             print('Listing all pipelines: ')
             index.list_all_dags()
