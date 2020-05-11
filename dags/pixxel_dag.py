@@ -79,10 +79,17 @@ def calculate_index():
     profile.update(driver='GTiff')
     profile.update(dtype=rasterio.float32)
 
-    with rasterio.open('output_' + tile_key + '.tif', 'w', **profile) as dataset:
+    data_path = ''
+
+    with open('modifications_previous.json', "r", encoding='utf-8') as mod:
+        data = json.load(mod)
+        
+        date_path = datetime.strptime(data['LastModified'][:10], '%Y/%m/%d')
+
+    with rasterio.open('output_' + 'COMMAND' + '_' + tile_key + '.tif', 'w', **profile) as dataset:
         dataset.write(normalized_difference.astype(rasterio.float32))
 
-    upload_processed_file_to_gcs('pixxel', 'output_' + 'COMMAND' + '_' + tile_key + '.tif', 'output_'  + 'COMMAND' + '_' + tile_key + '_airflow.tif')
+    upload_processed_file_to_gcs('pixxel', 'output_' + 'COMMAND' + '_' + tile_key + '.tif', date_path + '/output_'  + 'COMMAND' + '_' + tile_key + '_airflow.tif')
 
 def check_s3_modified():
 
