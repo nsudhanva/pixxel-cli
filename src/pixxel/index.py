@@ -4,6 +4,7 @@ from google.cloud import storage
 import scipy.misc
 import boto3
 import json
+import sys
 
 # export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 # export GOOGLE_APPLICATION_CREDENTIALS="keys.json"
@@ -15,6 +16,28 @@ class Index:
 
     def __init__(self):
         pass
+
+    def blob_exists(self, filename, projectname='initiable', bucket_name='us-central1-sample-a3ef44ca-bucket'):
+        client = storage.Client(projectname)
+        bucket = client.get_bucket(bucket_name)
+        blob = bucket.blob(filename)
+        return blob.exists()
+
+    def list_all_dags(self):
+        client = storage.Client()
+        for index, blob in enumerate(client.list_blobs('us-central1-sample-a3ef44ca-bucket', prefix='dags/')):
+            print(index, str(blob.name))
+
+    def delete_a_pipeline(self, number):
+        client = storage.Client()
+        file_name = client.list_blobs('us-central1-sample-a3ef44ca-bucket', prefix='dags/')
+
+        for index, blob in enumerate(client.list_blobs('us-central1-sample-a3ef44ca-bucket', prefix='dags/')):
+            if index == number:
+                blob.delete()
+                print(str(blob.name) + ' deleted')
+
+        self.delete_all_related_data()        
 
     def upload_dag(self, bucket_name, source_file_name, destination_blob_name):
         """Uploads a file to the bucket."""
@@ -40,10 +63,14 @@ class Index:
         
     def create_dag_for_airflow(self, parameters):
 
-        print(parameters)
+        # print(parameters)
         file_name, command, bucket, utm_code, latitude_band, square, year, month, day, sequence, resolution = parameters
 
         tile_key = bucket + '/tiles' + '/' + utm_code + '/'+ latitude_band + '/'+ square + '/'+ year + '/'+ month + '/'+ day + '/'+ sequence + '/' + resolution + '/'
+
+        if self.blob_exists(filename='dags/pixxel_dag_' + tile_key.replace('/', '_') + '.py'):
+            print('This pipeline already exists')
+            sys.exit()
 
         dag_file_template = open('./dags/pixxel_dag.py', 'r')
         dag_file = open('./dags/pixxel_dag_' + tile_key.replace('/', '_') + '.py', 'w')
@@ -51,7 +78,7 @@ class Index:
         list_of_files = self.get_list_of_files_from_command(command)
 
         check_words = ('LIST_OF_FILES', 'TILE_KEY', 'COMMAND', 'BUCKET', 'UTM_CODE', 'LATITUDE_BAND', 'SQUARE', 'YEAR', 'MONTH', 'DAY', 'SEQUENCE', 'RESOLUTION')
-        rep_words = (str(list_of_files), tile_key, command, bucket, utm_code, latitude_band, square, year, month, day, sequence, resolution)
+        rep_words = (str(list_of_files), tile_key, command,     bucket, utm_code, latitude_band, square, year, month, day, sequence, resolution)
 
         for line in dag_file_template:
             for check, rep in zip(check_words, rep_words):

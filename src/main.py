@@ -8,13 +8,19 @@ from pixxel.index import Index
 
 if __name__ == '__main__':
     os.environ["AWS_REQUEST_PAYER"] = "requester"
-    print('Hello World')
-    print(sys.argv)
 
     index = Index()
 
-    if len(sys.argv) != 11:
-        print('Please pass proper number of arguments')
-        sys.exit()
+    if sys.argv[1] == 'list':
+        print('Listing all pipelines: ')
+        index.list_all_dags()
+    elif sys.argv[1] == 'delete':
+        print('Enter the pipeline you want to delete: ')
+        index.list_all_dags()
+        
+        option = int(input('Enter the pipeline number you want to delete: '))
+        index.delete_a_pipeline(option)
+        index.list_all_dags()
+
     else:
         index.create_dag_for_airflow(sys.argv)
