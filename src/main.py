@@ -11,16 +11,19 @@ if __name__ == '__main__':
 
     index = Index()
 
-    if sys.argv[1] == 'list':
-        print('Listing all pipelines: ')
-        index.list_all_dags()
-    elif sys.argv[1] == 'delete':
-        print('Enter the pipeline you want to delete: ')
-        index.list_all_dags()
-        
-        option = int(input('Enter the pipeline number you want to delete: '))
-        index.delete_a_pipeline(option)
-        index.list_all_dags()
-
+    if len(sys.argv) != 11:
+        if sys.argv[1] == 'list':
+            print('Listing all pipelines: ')
+            index.list_all_dags()
+        elif sys.argv[1] == 'delete':
+            print('Enter the pipeline you want to delete: ')
+            index.list_all_dags()
+            
+            option = int(input('Enter the pipeline number you want to delete: '))
+            index.delete_a_pipeline(option)
+            index.list_all_dags()
+        else:
+            index.create_dag_for_airflow(sys.argv)
     else:
-        index.create_dag_for_airflow(sys.argv)
+        print('Oops! Seems like a wrong number of options are passed')
+
