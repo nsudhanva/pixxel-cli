@@ -9,6 +9,8 @@ A cli to dynamically create data pipelines for Sentinel-2
 * This program is automatically upload to Airflow and is scheduled for download
 * Any number of pipelines can be created
 
+![Pixxel Architecture](./assets/pixxel.png)
+
 ## Important Folders and Files
 
 ```
