@@ -12,12 +12,16 @@ import sys
 gcloud composer environments run sample connections -- -a --conn_id aws_default --conn_type aws --conn_extra '{"region_name": "us-east-1", "aws_access_key_id":"AKIAS2PFB57PYNF32REQ", "aws_secret_access_key": "h7IfqZG5nDKUoz/WoKrVqtfukEhs+CBmF3kFUGAz"}'
 bin/pixxel ndvi sentinel-s2-l2a 10 S DG 2018 12 31 0 R60m
 """
+
+GCS_DAGS_BUCKET_NAME = 'us-central1-sample-a3ef44ca-bucket'
+GCP_PROJECT_NAME = 'initiable'
+
 class Index:
 
     def __init__(self):
         pass
 
-    def blob_exists(self, filename, projectname='initiable', bucket_name='us-central1-sample-a3ef44ca-bucket'):
+    def blob_exists(self, filename, projectname=GCP_PROJECT_NAME, bucket_name=GCS_DAGS_BUCKET_NAME):
         client = storage.Client(projectname)
         bucket = client.get_bucket(bucket_name)
         blob = bucket.blob(filename)
@@ -25,19 +29,19 @@ class Index:
 
     def list_all_dags(self):
         client = storage.Client()
-        for index, blob in enumerate(client.list_blobs('us-central1-sample-a3ef44ca-bucket', prefix='dags/')):
+        for index, blob in enumerate(client.list_blobs(GCS_DAGS_BUCKET_NAME, prefix='dags/')):
             print(index, str(blob.name))
 
     def delete_a_pipeline(self, number):
         client = storage.Client()
-        file_name = client.list_blobs('us-central1-sample-a3ef44ca-bucket', prefix='dags/')
+        file_name = client.list_blobs(GCS_DAGS_BUCKET_NAME, prefix='dags/')
 
-        for index, blob in enumerate(client.list_blobs('us-central1-sample-a3ef44ca-bucket', prefix='dags/')):
+        for index, blob in enumerate(client.list_blobs(GCS_DAGS_BUCKET_NAME, prefix='dags/')):
             if index == number:
                 blob.delete()
                 print(str(blob.name) + ' deleted')
 
-    def upload_dag(self, source_file_name, destination_blob_name, bucket_name='us-central1-sample-a3ef44ca-bucket'):
+    def upload_dag(self, source_file_name, destination_blob_name, bucket_name=GCS_DAGS_BUCKET_NAME):
         """Uploads a file to the bucket."""
 
         storage_client = storage.Client()
