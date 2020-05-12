@@ -93,6 +93,8 @@ It is recommended to create a virtual environment using **VirtualEnv** or **Anac
 - Kubernetes: 3 vCPU * $25 each = $75 ~= Rs. 5700 + cluster charges around Rs. 2000
 - Bucket charges requester pays ~= $1 per pipeline run ~= Rs. 100
 - Network - depends (roughly $10 ~= Rs.700 a month)
+- Logs per section are extra
+  
 - **Overall: around Rs. 10,000 a month on average adding $1 (Rs. 75) per pipeline, autoscaling charges at $25 (Rs. 2000) for each node (depends on network traffic)**
 
 ## Testing
